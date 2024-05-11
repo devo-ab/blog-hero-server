@@ -100,6 +100,14 @@ async function run() {
       res.send(result);
     });
 
+    app.get('/wishlist/:email', async (req, res) => {
+      const email = req.params.email;
+      console.log(email);
+      const query = {userEmail : email};
+      const result = await wishlistCollection.find(query).toArray();
+      res.send(result);
+    });
+
 
 
 
