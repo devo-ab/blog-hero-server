@@ -33,6 +33,7 @@ async function run() {
 
     // collection start
     const blogsCollection = client.db("blogsDB").collection("blogs");
+    const commentCollection = client.db("blogsDB").collection("comment");
     // collection end
 
     app.post('/addblogs', async(req, res) => {
@@ -73,6 +74,13 @@ async function run() {
         }
       }
       const result = await blogsCollection.updateOne(filter, blog, options);
+      res.send(result);
+    });
+
+    app.post('/comments', async(req, res) => {
+      const comment = req.body;
+      console.log(comment)
+      const result = await commentCollection.insertOne(comment);
       res.send(result);
     });
 
