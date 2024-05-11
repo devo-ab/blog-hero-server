@@ -34,6 +34,7 @@ async function run() {
     // collection start
     const blogsCollection = client.db("blogsDB").collection("blogs");
     const commentCollection = client.db("blogsDB").collection("comment");
+    const wishlistCollection = client.db("blogsDB").collection("wishlist");
     // collection end
 
     app.post('/addblogs', async(req, res) => {
@@ -89,7 +90,14 @@ async function run() {
       // console.log(id)
       const query = {blogs_id : blogId};
       const result = await commentCollection.find(query).toArray();
-      res.send(result)
+      res.send(result);
+    });
+
+    app.post('/wishlist', async(req, res) => {
+      const wishlist = req.body;
+      console.log(wishlist);
+      const result = await wishlistCollection.insertOne(wishlist);
+      res.send(result);
     });
 
 
