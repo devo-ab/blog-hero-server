@@ -47,10 +47,32 @@ async function run() {
       res.send(result);
     });
 
+    // search start
+
+    app.get("/search/title/:text", async (req, res) => {
+      const searchTitle = req.params.text;
+      console.log(searchTitle);
+      const query = {};
+      if (searchTitle) {
+        query.title = { $regex: searchTitle, $options: "i" };
+      }
+      const result = await blogsCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    app.get("/search/:category", async (req, res) => {
+      const searchCategory = req.params.category;
+      console.log(searchCategory);
+      const result = await blogsCollection.find({ category: searchCategory }).toArray();
+      res.send(result);
+    });
+
+    // search end
+
     app.get("/recent", async (req, res) => {
-      const recentBlogs = blogsCollection.find().sort({ blog_time: -1 , blog_date: -1}).limit(6);
+      const recentBlogs = blogsCollection.find().sort({ blog_time: -1, blog_date: -1 }).limit(6);
       const result = await recentBlogs.toArray();
-      res.send(result)
+      res.send(result);
     });
 
     app.get("/blogs/:id", async (req, res) => {
@@ -119,22 +141,15 @@ async function run() {
       res.send(result);
     });
 
-    // app.get("/featured", async (req, res) => {
-    //   const data = await blogsCollection.aggregate([
-    //     {
-    //       $project: {
-    //         textLength: {$strLenWords : "$longDes"},
-    //         text: 1,
-    //       }
-    //     },
-    //     {
-    //       $sort: {textLength : 1}
-    //     }
-    //   ])
-    //   const result = await blogsCollection.find(data).limit(8).toArray();
-    //   // const result = await blogsCollection.find().sort({ length: -1 }).limit(8).toArray();
-    //   res.send(result)
-    // });
+    app.get("/featured", async (req, res) => {
+      const result = await blogsCollection.find().limit(10).toArray();
+      result.sort((a, b) => {
+        const wordCountA = a.longDes.trim().split(/\s+/).length;
+        const wordCountB = b.longDes.trim().split(/\s+/).length;
+        return wordCountB - wordCountA;
+      });
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
