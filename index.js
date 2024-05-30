@@ -190,6 +190,14 @@ async function run() {
       res.send(result);
     });
 
+    app.delete('/comments/:id', async(req, res) => {
+      const id = req.params.id;
+      console.log(id);
+      const query = {_id: new ObjectId(id)};
+      const result = await commentCollection.deleteOne(query);
+      res.send(result);
+    });
+
     app.post("/wishlist", async (req, res) => {
       const wishlist = req.body;
       // console.log(wishlist);
